@@ -2,10 +2,12 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ToDoItem2.Migrations
 {
     /// <inheritdoc />
-    public partial class testing : Migration
+    public partial class seeding : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,14 +34,15 @@ namespace ToDoItem2.Migrations
                 oldClrType: typeof(int),
                 oldType: "int");
 
-            migrationBuilder.AlterColumn<int>(
-                name: "taskNum",
+            migrationBuilder.InsertData(
                 table: "toDoItems",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .OldAnnotation("SqlServer:Identity", "1, 1");
+                columns: new[] { "taskNum", "UserId", "done", "taskName" },
+                values: new object[,]
+                {
+                    { 1, null, false, "Task 1" },
+                    { 2, null, false, "Task 2" },
+                    { 3, null, false, "Task 3" }
+                });
 
             migrationBuilder.AddForeignKey(
                 name: "FK_toDoItems_Users_UserId",
@@ -55,6 +58,21 @@ namespace ToDoItem2.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_toDoItems_Users_UserId",
                 table: "toDoItems");
+
+            migrationBuilder.DeleteData(
+                table: "toDoItems",
+                keyColumn: "taskNum",
+                keyValue: 1);
+
+            migrationBuilder.DeleteData(
+                table: "toDoItems",
+                keyColumn: "taskNum",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "toDoItems",
+                keyColumn: "taskNum",
+                keyValue: 3);
 
             migrationBuilder.RenameColumn(
                 name: "UserId",
@@ -75,15 +93,6 @@ namespace ToDoItem2.Migrations
                 oldClrType: typeof(int),
                 oldType: "int",
                 oldNullable: true);
-
-            migrationBuilder.AlterColumn<int>(
-                name: "taskNum",
-                table: "toDoItems",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .Annotation("SqlServer:Identity", "1, 1");
 
             migrationBuilder.AddForeignKey(
                 name: "FK_toDoItems_Users_userId",

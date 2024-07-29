@@ -26,6 +26,8 @@ namespace ToDoItem2.Presentation
         [HttpPost("AddTask")]
         public async Task<IActionResult> AddTask(ToDoItem toDoItem)
         {
+            // Ensure `toDoItem.Id` is not set explicitly
+            toDoItem.taskNum = 0; // or simply do not set it at all
             var addedTask = await _taskService.AddTaskAsync(toDoItem);
             return CreatedAtAction(nameof(GetAllTasks), new { taskName = addedTask.taskName }, addedTask);
         }

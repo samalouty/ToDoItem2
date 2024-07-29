@@ -12,8 +12,8 @@ using ToDoItem2.Infrastructure;
 namespace ToDoItem2.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240729174500_testing")]
-    partial class testing
+    [Migration("20240729184202_seeding")]
+    partial class seeding
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,10 @@ namespace ToDoItem2.Migrations
             modelBuilder.Entity("ToDoItem2.Domain.ToDoItem", b =>
                 {
                     b.Property<int>("taskNum")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("taskNum"));
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -45,6 +48,26 @@ namespace ToDoItem2.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("toDoItems");
+
+                    b.HasData(
+                        new
+                        {
+                            taskNum = 1,
+                            done = false,
+                            taskName = "Task 1"
+                        },
+                        new
+                        {
+                            taskNum = 2,
+                            done = false,
+                            taskName = "Task 2"
+                        },
+                        new
+                        {
+                            taskNum = 3,
+                            done = false,
+                            taskName = "Task 3"
+                        });
                 });
 
             modelBuilder.Entity("ToDoItem2.Domain.User", b =>

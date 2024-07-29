@@ -6,7 +6,6 @@ namespace ToDoItem2.Domain
     public class ToDoItem
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int taskNum { get; set; } = 0;
 
         public Boolean done { get; set; } = false;
