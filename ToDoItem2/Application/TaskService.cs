@@ -61,7 +61,7 @@ namespace ToDoItem2.Services
         }
 
         // User Methods
-        public async Task<List<User>> GetAllUsersAsync()
+       /* public async Task<List<User>> GetAllUsersAsync()
         {
             return await _dbContext.Users.Include(u => u.toDoItems).ToListAsync();
         }
@@ -102,6 +102,6 @@ namespace ToDoItem2.Services
             _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
             return true;
-        }
+        }*/
     }
 }
