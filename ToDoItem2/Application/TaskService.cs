@@ -16,6 +16,7 @@ namespace ToDoItem2.Services
             _dbContext = dbContext;
         }
 
+        // Task Methods
         public async Task<List<ToDoItem>> GetAllTasksAsync()
         {
             return await _dbContext.toDoItems.ToListAsync();
@@ -55,6 +56,50 @@ namespace ToDoItem2.Services
             }
 
             _dbContext.toDoItems.Remove(task);
+            await _dbContext.SaveChangesAsync();
+            return true;
+        }
+
+        // User Methods
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _dbContext.Users.Include(u => u.toDoItems).ToListAsync();
+        }
+
+        public async Task<User> GetUserAsync(int userId)
+        {
+            return await _dbContext.Users.Include(u => u.toDoItems).SingleOrDefaultAsync(x => x.Id == userId);
+        }
+
+        public async Task<User> AddUserAsync(User user)
+        {
+            _dbContext.Users.Add(user);
+            await _dbContext.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<User> UpdateUserAsync(User updatedUser)
+        {
+            var user = await _dbContext.Users.SingleOrDefaultAsync(u => u.Id == updatedUser.Id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.UserName = updatedUser.UserName;
+            await _dbContext.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var user = await _dbContext.Users.Include(u => u.toDoItems).SingleOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                return false;
+            }
+
+            _dbContext.Users.Remove(user);
             await _dbContext.SaveChangesAsync();
             return true;
         }

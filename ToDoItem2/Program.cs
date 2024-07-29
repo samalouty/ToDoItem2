@@ -36,8 +36,7 @@ namespace ToDoItem2.Presentation
         public void ConfigureServices(IServiceCollection services)
         {
             // Add DbContext
-            services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AppDbContext>();
 
             // Add application services
             services.AddScoped<TaskService>();
