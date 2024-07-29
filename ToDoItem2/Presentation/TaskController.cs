@@ -1,84 +1,69 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using ToDoItem2.Domain;
-
+using ToDoItem2.Services;
 
 namespace ToDoItem2.Presentation
 {
-    public class TaskController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class TaskController : ControllerBase
     {
-        private static int num = 0;
-        
+        private readonly TaskService _taskService;
 
-        private static List<ToDoItem> toDoItems = new List<ToDoItem>();
+        public TaskController(TaskService taskService)
+        {
+            _taskService = taskService;
+        }
 
         [HttpGet("GetAllTasks")]
-                public IActionResult getAllTasks()
-                {
-                    return Ok(toDoItems);
+        public async Task<IActionResult> GetAllTasks()
+        {
+            var tasks = await _taskService.GetAllTasksAsync();
+            return Ok(tasks);
+        }
 
-                }
+        [HttpPost("AddTask")]
+        public async Task<IActionResult> AddTask(ToDoItem toDoItem)
+        {
+            var addedTask = await _taskService.AddTaskAsync(toDoItem);
+            return CreatedAtAction(nameof(GetAllTasks), new { taskName = addedTask.taskName }, addedTask);
+        }
 
-                [HttpPost("addTask")]
-                public IActionResult addTask(ToDoItem toDoItem)
-                {
-                    if (toDoItems.Count == 0)
-                    {
-                        num = 0;
-                    }
-                    num++;
-                    toDoItem.taskNum = num;
-                    toDoItems.Add(toDoItem);
-                    return CreatedAtAction(nameof(getAllTasks), new { taskName = toDoItem.taskName }, toDoItem);
-                }
+        [HttpGet("GetTask")]
+        public async Task<IActionResult> GetTask(int num)
+        {
+            var task = await _taskService.GetTaskAsync(num);
+            if (task == null)
+            {
+                return NotFound();
+            }
 
+            return Ok(task);
+        }
 
-                [HttpGet("getTask")]
+        [HttpPut("UpdateTask")]
+        public async Task<IActionResult> UpdateTask(ToDoItem updatedTask)
+        {
+            var task = await _taskService.UpdateTaskAsync(updatedTask);
+            if (task == null)
+            {
+                return NotFound();
+            }
 
-                public IActionResult getTask(int num)
-                {
-                    var task = toDoItems.SingleOrDefault(x => x.taskNum == num);
-                    if (task == null)
-                    {
-                        return NotFound();
-                    }
+            return Ok(task);
+        }
 
-                    return Ok(task);
+        [HttpDelete("DeleteTask")]
+        public async Task<IActionResult> DeleteTask(int num)
+        {
+            var success = await _taskService.DeleteTaskAsync(num);
+            if (!success)
+            {
+                return NotFound();
+            }
 
-                }
-
-                [HttpPut("updateTask")]
-                public IActionResult updateTask(ToDoItem updatedTask)
-                {
-                    var task = toDoItems.SingleOrDefault(t => t.taskNum == updatedTask.taskNum);
-                    if (task == null)
-                    {
-                        return NotFound();
-                    }
-                    if (!string.IsNullOrEmpty(updatedTask.taskName))
-                    {
-                        task.taskName = updatedTask.taskName;
-                    }
-                    task.taskName = updatedTask.taskName;
-
-                    return Ok(updatedTask);
-                }
-
-
-                [HttpDelete("DeleteTask")]
-
-                public IActionResult DeleteTask(int num)
-                {
-                    var task = toDoItems.SingleOrDefault(t => t.taskNum == num);
-                    if (task == null)
-                    {
-                        return NotFound();
-                    }
-                    toDoItems.Remove(task);
-                    return NoContent();
-                }
-        
-
-
+            return NoContent();
+        }
     }
 }
